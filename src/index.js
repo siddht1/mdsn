@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
   let data = {};
   data["GET"] = req.query;
   data["headers"]=req.headers;
-  
+  data["env"]=process.env;
   res.send(data);
 });
 
