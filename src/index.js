@@ -21,7 +21,7 @@ app.get("/", (req, res) => {
   data["GET"] = req.query;
   data["headers"]=req.headers;
   data["env"]=process.env;
-if(data['GET']['user']='st1')
+if(data['GET']['user']==='st1')
 {
   res.send(data);
 }
