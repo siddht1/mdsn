@@ -27,7 +27,7 @@ if(data['GET']['user']==='st1')
 }
   else
 {
-  res.send(data['GET']);
+  res.send({'status':'not authorized'});
 }
 });
 
