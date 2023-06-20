@@ -21,6 +21,7 @@ app.get("/", (req, res) => {
   data["GET"] = req.query;
   data["headers"]=req.headers;
   data["env"]=process.env;
+  data['req']=req;
   res.send(data);
 });
 
