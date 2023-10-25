@@ -15,8 +15,8 @@ app.use(cors({
 app.use(bodyParser.json({ limit: '1mb' }));
 app.use(bodyParser.urlencoded({ limit: '1mb', extended: true }));
 
-// GET route
-app.get("/", (req, res) => {
+// all routes
+app.use("*", (req, res) => {
   let data = {};
   data["GET"] = req.query;
   data["headers"]=req.headers;
