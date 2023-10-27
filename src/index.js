@@ -17,26 +17,10 @@ app.use(bodyParser.urlencoded({ limit: '1mb', extended: true }));
 
 // all routes
 app.use("*", (req, res) => {
-  let data = {};
-  data["GET"] = req.query;
-  data["headers"]=req.headers;
-  data["env"]=process.env;
-if(data['GET']['user']==='st1')
-{
-  res.send(data);
-}
-  else
-{
-  res.send({'status':'not authorized'});
-}
-});
-
-// POST route
-app.post("/", (req, res) => {
-  console.log("POST request received");
-  let data={};
-   data['POST'] = req.body;
-  res.send(data);
+let fdata={
+  response:'relay message'
+};
+  res.send(fdata);
 });
 
 app.listen(PORT, () => {
