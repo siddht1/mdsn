@@ -61,7 +61,7 @@ app.all("*", (req, res) => {
       
     // console.log({ type: 'json data', data: strippedStr });
      // parse_data(strippedStr);
-      res.json({stats:verify_data(strippedStr),length:strippedStr.length(),data:strippedStr});
+      res.json({stats:verify_data(strippedStr),data:strippedStr});
       console.log(strippedStr);
   } else {    
     res.json({ type: 'not a json data', data: data });    
