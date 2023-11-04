@@ -1,28 +1,78 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
+import express from 'express';
+import axios from 'axios';
+import cors from 'cors';
+import bodyParser from 'body-parser'; 
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.use(cors());
+app.use(bodyParser.json());  
 
-// Enable CORS for specific origin
-app.use(cors({
-//   origin: "https://example.com"
-}));
+// const parse_data= (data) => {
+//   let jsonData=JSON.parse(data);
+//   console.log(jsonData);
+// if (jsonData.hasOwnProperty('message')) {  
+//   console.log(jsonData['message']);
+// }
+// }
+// const parse_data = (data) => {  
+//   let jsonData = JSON.parse(data);  
+//   console.log(jsonData);  
+    
+//   if (Object.keys(jsonData).length === 0) {  
+//     console.log('Empty object');  
+//   } else {  
+//     console.log('Non-empty object');  
+//   }  
+// }  
 
-// Parse request body and extended the size to 1mb
+ const parse_data = (data) => {  
+   const keysArr = Object.keys(data);  
+     console.log(keysArr);
+    const jsonLength = keysArr.length;  
+     console.log(jsonLength); 
+ }
 
-app.use(bodyParser.json({ limit: '1mb' }));
-app.use(bodyParser.urlencoded({ limit: '1mb', extended: true }));
+//  to verify if the data is json or not
+const verify_data = (data) =>
+  {
+    // return data;
+     try {  
+    JSON.parse(data);  
+         console.log('Valid JSON');
+    return true;  
+  }
+     catch (error) {  
+console.log(' Not a valid JSON');
+    return false;  
+     
+  }  
+}
+// ***  ALL METHOD***
 
-// all routes
-app.use("*", (req, res) => {
-let fdata={
-  response:'relay message'
-};
-  res.send(fdata);
-});
+app.all("*", (req, res) => {  
+  const data = req.body;  
+  
+  if (verify_data && typeof data === 'object' && data) {    
+    const jsonString = JSON.stringify(data);  
+    const strippedStr = jsonString.replace(/`/g, '');    
+    // res.send({ type: 'json data', data: strippedStr });   
+      
+    // console.log({ type: 'json data', data: strippedStr });
+     // parse_data(strippedStr);
+      res.json({stats:verify_data(strippedStr),length:strippedStr.length(),data:strippedStr});
+      console.log(strippedStr);
+  } else {    
+    res.json({ type: 'not a json data', data: data });    
+    console.log({ type: 'not a json data', data: data });  
+  }    
+});  
+  
+
 
 app.listen(PORT, () => {
-  console.log(`API is listening on port ${PORT}`);
+    console.log(`Relay app is listening on port ${PORT}`);
 });
+
+
