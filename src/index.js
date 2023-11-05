@@ -8,7 +8,6 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import openai from 'openai';  
 
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(cors());
