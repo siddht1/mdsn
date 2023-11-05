@@ -24,7 +24,7 @@ const supabase = createClient(supabaseUri, supabaseKey);
 const apiKey = process.env.AZURE_KEY;    
     
 async function invokeOpenAIEndpoint(message) {      
-  const endpoint='https://genos.openai.azure.com/openai/deployments/gpt-35-turbo-16k/chat/completions?api-version=2023-07-01-preview';    
+  const endpoint='https://ginel-gpt.openai.azure.com/openai/deployments/gpt-35-turbo-16k/chat/completions?api-version=2023-07-01-preview';    
       
   try {      
     const response = await axios.post(endpoint, {      
@@ -49,34 +49,68 @@ async function invokeOpenAIEndpoint(message) {
   }      
 }    
     
-function isValidFormat(data) {    
-  if (!data) return false;    
-  if (!Array.isArray(data.messages)) return false;    
-  for (let msg of data.messages) {    
-    if (typeof msg !== 'object' || !msg.role || !msg.content) return false;    
-  }    
-  if (typeof data.stream !== 'boolean') return false;    
-  if (typeof data.model !== 'string') return false;    
-  if (typeof data.temperature !== 'number') return false;    
-  if (typeof data.presence_penalty !== 'number') return false;    
+// function isValidFormat(data) {    
+//   if (!data) return false;    
+//   if (!Array.isArray(data.messages)) return false;    
+//   for (let msg of data.messages) {    
+//     if (typeof msg !== 'object' || !msg.role || !msg.content) return false;    
+//   }    
+//   // if (typeof data.stream !== 'boolean') return false;    
+//   if (typeof data.model !== 'string') return false;    
+//   if (typeof data.temperature !== 'number') return false;    
+//   if (typeof data.presence_penalty !== 'number') return false;    
       
-  return true;    
-}    
+//   return true;    
+// }    
+function isValidFormat(message) {
+  if (!message.role || !message.content) return false;
+  if (typeof message !== 'object') return false;
+
+  return true;
+}
   
 app.all("*", async(req, res) => {    
   const data = req.body;    
   const jsonString = JSON.stringify(data);    
   const strippedStr = jsonString.replace(/`/g, '');   
+    
+    // check 
+ //    const message = req.body.messages[0];
+
+ //  if (message instanceof Object)
+ //  {
+ //      const response = await invokeOpenAIEndpoint(message);     
+ //      res.send(response);
+ //  }
+ // else
+ //  {
+ //      res.send(' Either no message or not an object');
+ //  }
+
+  if (!data.messages || !Array.isArray(data.messages)) {
+    res.send('No messages found in request body');
+    return;
+  }
+
+  const message = req.body.messages[0];
+
+  if (message instanceof Object) {
+    const response = await invokeOpenAIEndpoint(message);
+    res.send(response);
+  } else {
+    res.send('Invalid message format');
+  }
+    
   
-  if (typeof data === 'object' && data && isValidFormat(data)) {      
-    // send the data to OpenAI  
-    const response = isValidFormat(strippedStr);  
-    res.send(response);  
-    console.log('JSON DATA');  
-  } else {      
-    res.json({ type: 'not a valid format or not a json data', data: data });      
-    console.log({ type: 'not a valid format or not a json data', data: data });    
-  }  
+  // if (typeof data === 'object' && data && isValidFormat(data)) {      
+  //   // send the data to OpenAI  
+  //   const response = isValidFormat(strippedStr);  
+  //   res.send(response);  
+  //   console.log('JSON DATA');  
+  // } else {      
+  //   res.json({ type: 'not a valid format or not a json data', data: data });      
+  //   console.log({ type: 'not a valid format or not a json data', data: data });    
+  // }  
   
   let log = {  
     status: "ok",  
