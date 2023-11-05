@@ -2,12 +2,20 @@ import express from 'express';
 import axios from 'axios';
 import cors from 'cors';
 import bodyParser from 'body-parser'; 
+import helmet from 'helmet';
+import morgan from 'morgan';
 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());  
+
+const helmet = require('helmet');
+const morgan = require('morgan');
+
+app.use(morgan('combined'));
+app.use(helmet());
 
 // const parse_data= (data) => {
 //   let jsonData=JSON.parse(data);
