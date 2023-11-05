@@ -11,8 +11,6 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(bodyParser.json());  
 
-const helmet = require('helmet');
-const morgan = require('morgan');
 
 app.use(morgan('combined'));
 app.use(helmet());
