@@ -22,30 +22,34 @@ const supabase = createClient(supabaseUri, supabaseKey);
 
 const apiKey = process.env.AZURE_KEY;
 
-async function invokeOpenAIEndpoint(message) {
-    const endpoint = 'https://genos.openai.azure.com/openai/deployments/gpt-35-turbo-16k/chat/completions?api-version=2023-07-01-preview';
-    console.log(message);
-    try {
-        const response = await axios.post(endpoint, {
-            prompt: message,
-            model: 'gpt-35-turbo-16k',
-            max_tokens: 800,
-            temperature: 0.7,
-            top_p: 0.95,
-            frequency_penalty: 0,
-            presence_penalty: 0
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
-            }
-        });
+// async function invokeOpenAIEndpoint(message) {
+//     const endpoint = 'https://genos.openai.azure.com/openai/deployments/gpt-35-turbo-16k/chat/completions?api-version=2023-07-01-preview';
+//     console.log(message);
+//     try {
+//         const response = await axios.post(endpoint, {
+//             prompt: message,
+//             model: 'gpt-35-turbo-16k',
+//             max_tokens: 800,
+//             temperature: 0.7,
+//             top_p: 0.95,
+//             frequency_penalty: 0,
+//             presence_penalty: 0
+//         }, {
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'Authorization': `Bearer ${apiKey}`
+//             }
+//         });
 
-        return response.data.choices[0].text.trim();
-    } catch (error) {
-        console.error('Error invoking OpenAI endpoint:', error);
-        throw error;
-    }
+//         return response.data.choices[0].text.trim();
+//     } catch (error) {
+//         console.error('Error invoking OpenAI endpoint:', error);
+//         throw error;
+//     }
+// }
+
+async function invokeOpenAIEndpoint(message) {
+return message;
 }
 
 // function isValidFormat(message) {
