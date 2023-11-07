@@ -1,102 +1,104 @@
-import express from 'express';    
-import axios from 'axios';    
-import cors from 'cors';    
-import { createClient } from "@supabase/supabase-js";    
-import { ulid } from 'ulid';    
-import bodyParser from 'body-parser';     
-import helmet from 'helmet';    
-import morgan from 'morgan';    
-import openai from 'openai'; 
+import express from 'express';  
+import { OpenAIClient, AzureKeyCredential } from "@azure/openai";  
+import cors from 'cors';  
+import { createClient } from "@supabase/supabase-js";  
+import { ulid } from 'ulid';  
+import bodyParser from 'body-parser';  
+import helmet from 'helmet';  
+import morgan from 'morgan';  
+import dotenv from "dotenv/config";  
+  
+const app = express();  
+const PORT = process.env.PORT || 3000;  
+app.use(cors());  
+app.use(bodyParser.json());  
+app.use(morgan('combined'));  
+app.use(helmet());  
+  
+const supabaseUri = process.env.SUPABASE_URI;  
+const supabaseKey = process.env.SUPABASE_KEY;  
+const supabase = createClient(supabaseUri, supabaseKey);  
+  
+// You will need to set these environment variables or edit the following values  
+const endpoint = process.env.ENDPOINT;  
+const azureApiKey = process.env.AZURE_KEY;  
+const ulidgen=ulid();
+  
+const mess = [  
+  { role: "system", content: "You are a helpful assistant." }];
+  
+function isValidFormat(message) {  
+  if (typeof message !== 'object') return false; // Check if message is an object first.  
+  if (!message.role || !message.content) return false;  
+  return true;  
+}  
+  
+// async function getChatbotResponse(message) {  
+//   const client = new OpenAIClient(endpoint, new AzureKeyCredential(azureApiKey));  
+//   const deploymentId = "gpt-35-turbo-16k";  
+//   const result = await client.getCompletions(deploymentId, message, { maxTokens: 128 });  
+//   for (const choice of result.choices) {  
+//     console.log(choice.text);  
+//   }  
+// }  
+async function getChatbotResponse(messa) {
+  //  generate messages ultitlizing both the mess string and the user request
+const messages = [...mess,...messa];  
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-app.use(cors());
-app.use(bodyParser.json());
+  console.log(messages);
 
-app.use(morgan('combined'));
-app.use(helmet());
+  const client = new OpenAIClient(endpoint, new AzureKeyCredential(azureApiKey));
+  const deploymentId = "gpt-35-turbo";
+  const result = await client.getChatCompletions(deploymentId, messages);
 
-const supabaseUri = process.env.SUPABASE_URI;
-const supabaseKey = process.env.SUPABASE_KEY;
-const supabase = createClient(supabaseUri, supabaseKey);
-
-const apiKey = process.env.AZURE_KEY;
-
-// async function invokeOpenAIEndpoint(message) {
-//     const endpoint = 'https://genos.openai.azure.com/openai/deployments/gpt-35-turbo-16k/chat/completions?api-version=2023-07-01-preview';
-//     console.log(message);
-//     try {
-//         const response = await axios.post(endpoint, {
-//             prompt: message,
-//             model: 'gpt-35-turbo-16k',
-//             max_tokens: 800,
-//             temperature: 0.7,
-//             top_p: 0.95,
-//             frequency_penalty: 0,
-//             presence_penalty: 0
-//         }, {
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'Authorization': `Bearer ${apiKey}`
-//             }
-//         });
-
-//         return response.data.choices[0].text.trim();
-//     } catch (error) {
-//         console.error('Error invoking OpenAI endpoint:', error);
-//         throw error;
-//     }
-// }
-
-async function invokeOpenAIEndpoint(message) {
-return message;
+  for (const choice of result.choices) {
+    console.log(choice.message);
+    return (choice.message);
+  }
 }
 
-// function isValidFormat(message) {
-//     if (!message.role || !message.content) return false;
-//     if (typeof message !== 'object') return false;
+function test(messa)
+{
+return messa;
+}
 
-//     return true;
-// }
-
-function isValidFormat(message) {  
-    if (typeof message !== 'object') return false; // Check if message is an object first.  
-    if (!message.role || !message.content) return false;  
   
-    return true;  
-}  
+app.all("*", async (req, res) => {  
+  const data = req.body;  
+  const jsonString = JSON.stringify(data);  
+  const strippedStr = jsonString.replace(/`/g, '');  
+  
+  if (!data.messages || !Array.isArray(data.messages)) {  
+    res.send('No messages found in request body');  
+    return;  
+  } else {  
+ 
+  const response = await getChatbotResponse(data.messages);
+res.send(response.content);
+    // res.send(test(data.messages));
+    let dbdata={
+        created_at: new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }),
+        input:data,
+        out:response,
+      ulid:ulidgen
+    };
+        // Insert the log entry into Supabase
+    const { data: logEntry, error } = await supabase
+        .from("azure_req_res")
+        .insert([dbdata]);
 
-app.all("*", async (req, res) => {
-    // const data = req.body;
-    // const jsonString = JSON.stringify(data);
-    // const strippedStr = jsonString.replace(/`/g, '');
-
-    const data = req.body;  
-
-    if (!data.messages || !Array.isArray(data.messages)) {
-        res.send('No messages found in request body');
-        return;
+    if (error) {
+        console.error("Error inserting log:", error);
+        // Handle the error  
+    } 
+    else {
+        // Access the inserted data  
+        console.log("Log entry inserted:", logEntry);
+    }
+        
     }
 
-    const message = req.body.messages[0];
-
-     if (isValidFormat(message)) {  
-        const response = await invokeOpenAIEndpoint(message.content); // Pass message.content if OpenAI endpoint expects a string.  
-        res.send(response);  
-    } else {  
-        res.send('Invalid message format');  
-    }  
   
-
-    // if (typeof data === 'object' && data && isValidFormat(data)) {      
-    //   // send the data to OpenAI  
-    //   const response = isValidFormat(strippedStr);  
-    //   res.send(response);  
-    //   console.log('JSON DATA');  
-    // } else {      
-    //   res.json({ type: 'not a valid format or not a json data', data: data });      
-    //   console.log({ type: 'not a valid format or not a json data', data: data });    
-    // }  
 
     let log = {
         status: "ok",
@@ -112,10 +114,8 @@ app.all("*", async (req, res) => {
         UA: req.headers['user-agent'],
         // uuid: uuidv4(),
         date_time: new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }),
-        ulid: ulid()
+        ulid: ulidgen
     };
-
-    // console.log(log);
 
     // Insert the log entry into Supabase
     const { data: logEntry, error } = await supabase
@@ -125,16 +125,16 @@ app.all("*", async (req, res) => {
     if (error) {
         console.error("Error inserting log:", error);
         // Handle the error  
-    } else {
+    } 
+    else {
         // Access the inserted data  
         console.log("Log entry inserted:", logEntry);
     }
-    const parsedData = JSON.parse(strippedStr);
-    console.log(parsedData);
-});
+  
+}); 
 
 
-
-app.listen(PORT, () => {
-    console.log(`Relay app is listening on port ${PORT}`);
-});
+  
+app.listen(PORT, () => {  
+  console.log(`Server listening on port ${PORT}`);  
+});  
