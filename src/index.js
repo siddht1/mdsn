@@ -50,11 +50,13 @@ const messages = [...mess,...messa];
   const client = new OpenAIClient(endpoint, new AzureKeyCredential(azureApiKey));
   const deploymentId = "gpt-35-turbo";
   const result = await client.getChatCompletions(deploymentId, messages);
-
-  for (const choice of result.choices) {
-    console.log(choice.message);
-    return (choice.message);
-  }
+console.log(result_;
+  // for (const choice of result.choices) {
+  //   console.log(choice.message);
+  //   return (choice.message);
+  // }
+      console.log("Tokens Used:", result.usage.totalTokens);  
+    console.log("Cost:", result.usage.totalCost); 
 }
 
 function test(messa)
@@ -74,7 +76,7 @@ app.all("*", async (req, res) => {
   } else {  
  
   const response = await getChatbotResponse(data.messages);
-res.send(response.content);
+res.send(response);
       // const tokenCount = response.usage.totalTokens;  
   // const cost = response.usage.totalCost;  
     // console.log(tokenCount);
