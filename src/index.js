@@ -75,12 +75,18 @@ app.all("*", async (req, res) => {
  
   const response = await getChatbotResponse(data.messages);
 res.send(response.content);
+      const tokenCount = response.usage.totalTokens;  
+  const cost = response.usage.totalCost;  
+    console.log(tokenCount);
+    console.log(cost);
     // res.send(test(data.messages));
     let dbdata={
         created_at: new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }),
         input:data,
         out:response,
-      ulid:ulidgen
+      ulid:ulidgen,
+      token:tokenCount,
+      cost:cost
     };
         // Insert the log entry into Supabase
     const { data: logEntry, error } = await supabase
