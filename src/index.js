@@ -56,8 +56,8 @@ console.log(result);
   //   console.log(choice.message);
   //   return (choice.message);
   // }
-      console.log("Tokens Used:", result.usage.totalTokens);  
-    console.log("Cost:", result.usage.totalCost); 
+ //     console.log("Tokens Used:", result.usage.totalTokens);  
+ //   console.log("Cost:", result.usage.totalCost); 
 }
 
 function test(messa)
@@ -77,7 +77,11 @@ app.all("*", async (req, res) => {
   } else {  
  
   const response = await getChatbotResponse(data.messages);
-    res.send(response.choices);
+    // res.send(response.choices);
+      for (const choice of response.choices) {
+          (choice.message);
+    res.send(choice.message);
+ }
       // const tokenCount = response.usage.totalTokens;  
   // const cost = response.usage.totalCost;  
     // console.log(tokenCount);
