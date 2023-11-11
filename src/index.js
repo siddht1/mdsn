@@ -79,7 +79,7 @@ app.all("*", async (req, res) => {
   const response = await getChatbotResponse(data.messages);
     // res.send(response.choices);
       for (const choice of response.choices) {
-          (choice.message);
+          // (choice.message);
     res.send(choice.message);
  }
       // const tokenCount = response.usage.totalTokens;  
