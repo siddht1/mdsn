@@ -77,16 +77,12 @@ app.all("*", async (req, res) => {
   } else {  
  
   const response = await getChatbotResponse(data.messages);
-    // res.send(response.choices);
+ 
       for (const choice of response.choices) {
-          // (choice.message);
-    res.send(choice.message);
+    
+    res.send(choice.message.content);
  }
-      // const tokenCount = response.usage.totalTokens;  
-  // const cost = response.usage.totalCost;  
-    // console.log(tokenCount);
-    // console.log(cost);
-    // res.send(test(data.messages));
+
     let dbdata={
         created_at: new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }),
         input:data,
