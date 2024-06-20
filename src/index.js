@@ -32,15 +32,7 @@ function isValidFormat(message) {
   if (!message.role || !message.content) return false;  
   return true;  
 }  
-  
-// async function getChatbotResponse(message) {  
-//   const client = new OpenAIClient(endpoint, new AzureKeyCredential(azureApiKey));  
-//   const deploymentId = "gpt-35-turbo-16k";  
-//   const result = await client.getCompletions(deploymentId, message, { maxTokens: 128 });  
-//   for (const choice of result.choices) {  
-//     console.log(choice.text);  
-//   }  
-// }  
+
 async function getChatbotResponse(messa) {
   //  generate messages ultitlizing both the mess string and the user request
 const messages = [...mess,...messa];  
