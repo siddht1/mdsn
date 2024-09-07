@@ -19,7 +19,7 @@ const supabaseUri = process.env.SUPABASE_URI;
 const supabaseKey = process.env.SUPABASE_KEY;  
 const supabase = createClient(supabaseUri, supabaseKey);  
   
-// You will need to set these environment variables or edit the following values  
+// endpoint & azure key 
 const endpoint = process.env.ENDPOINT;  
 const azureApiKey = process.env.AZURE_KEY;  
 const ulidgen=ulid();
