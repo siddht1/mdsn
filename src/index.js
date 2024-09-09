@@ -18,7 +18,7 @@ app.use(helmet());
 const supabaseUri = process.env.SUPABASE_URI;  
 const supabaseKey = process.env.SUPABASE_KEY;  
 const supabase = createClient(supabaseUri, supabaseKey);  
-  
+  //  will also add health checker 
 // endpoint & azure key 
 const endpoint = process.env.ENDPOINT;  
 const azureApiKey = process.env.AZURE_KEY;  
