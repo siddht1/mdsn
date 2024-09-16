@@ -38,9 +38,9 @@ async function getChatbotResponse(messa) {
 const messages = [...mess,...messa];  
 
   console.log(messages);
-
+//  set deployemntid to gpt-40
   const client = new OpenAIClient(endpoint, new AzureKeyCredential(azureApiKey));
-  const deploymentId = "gpt-4o-mini";
+  const deploymentId = "gpt-4o";
   const result = await client.getChatCompletions(deploymentId, messages);
 console.log(result);
   return result;
